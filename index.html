@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Video Feed</title>
+    <script>
+        function updateDistance() {
+            fetch('/distance')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('distance').innerText = `Distance: ${data.distance.toFixed(2)} cm`;
+                    document.getElementById('timestamp').innerText = `Timestamp: ${data.timestamp}`;
+                });
+        }
+
+        function fetchHistory() {
+            fetch('/history')
+                .then(response => response.json())
+                .then(data => {
+                    let history = document.getElementById('history');
+                    history.innerHTML = '';
+                    data.forEach(row => {
+                        let listItem = document.createElement('li');
+                        listItem.innerText = `Timestamp: ${row[0]}, Distance: ${row[1].toFixed(2)} cm`;
+                        history.appendChild(listItem);
+                    });
+                });
+        }
+
+        setInterval(updateDistance, 2000);  // Update distance every 2 seconds
+        setInterval(fetchHistory, 10000);   // Fetch history every 10 seconds
+    </script>
+</head>
+<body>
+    <h1>Live Video Feed</h1>
+    <img src="{{ url_for('video_feed') }}" alt="Video Feed">
+    <p id="distance">Distance: </p>
+    <p id="timestamp">Timestamp: </p>
+    <h2>Distance History</h2>
+    <ul id="history"></ul>
+</body>
+</html>
